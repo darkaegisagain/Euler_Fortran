@@ -77,6 +77,18 @@ subroutine problem_2
   print *, "Even Sum is ", even_sum
 end subroutine problem_2
 
+subroutine find_primes(count, start, array_of_primes)
+  integer :: count, start, i
+  long, pointer :: array_of_primes
+
+  do i = (start, count)
+     if (is_prime(i) then
+end
+
+subroutine problem_3
+  long :: number = 600851475143
+  
+end subroutine problem_3
 
 program main
   !call problem_1
