@@ -1,3 +1,0 @@
-gcc -O1 -fomit-frame-pointer
-
-This will be used to compile .c files.

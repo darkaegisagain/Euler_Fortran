@@ -1,1 +1,0 @@
-#define HASRDTSC 1

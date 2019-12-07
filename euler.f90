@@ -1,19 +1,4 @@
 
-! primgen library
-module primgen
-  use iso_c_binding
-  interface
-     ! int gen_prime_array(int array_size, int64 *array, int64 limit)
-     function  gen_prime_array(array_size, array, limit) bind(C, name="gen_prime_array")
-       use, intrinsic :: iso_c_binding
-       integer(c_int) :: gen_prime_array
-       integer(c_int) :: array_size
-       integer(8), dimension(*) :: array
-       integer(8) :: limit
-     end function gen_prime_array
-  end interface
-end module primgen
-
 ! PROBLEM 1
 subroutine problem_1
   integer :: i, count, sum
@@ -63,7 +48,7 @@ subroutine problem_2
   integer :: sum = 0
   integer :: even_sum = 0
   integer :: x = 0
-  integer :: f
+  integer :: f = 0
   integer :: fibonacci
 
   do while (f <= 4000000)
@@ -85,36 +70,40 @@ subroutine problem_2
   print *, "Even Sum is ", even_sum
 end subroutine problem_2
 
-
-
-subroutine find_primes(count, start, array_of_primes)
-  integer :: count, start
-  integer(8) :: array_of_primes(:)
-end subroutine find_primes
-
-
-
 subroutine problem_3
-  use primgen
-  use iso_c_binding
-  integer(8) :: number = 600851475143
-  integer(8), dimension(:) :: prime_array(:)
-  integer(c_int) :: array_size = 10000
-  integer(c_int) :: prime_count
+  use, intrinsic :: iso_c_binding
+  implicit none
 
-  allocate(prime_array(array_size))
+  integer(8) :: prime_limit = 600851475143
+  integer(8) :: max_factor = 0, i;
 
-  prime_count = gen_prime_array(array_size, array_of_primes(array_size), number)
+  max_factor = prime_limit
+  i = 2
+  
+  do
+     if (mod(max_factor, i) == 0) then
+        max_factor = max_factor / i
+        print *, "found factor ", i, "reducing ", max_factor
+        i = 2
+     else
+        i = i + 1
+     end if
 
-  print *, "generated ", count, " primes"
+     if (i == max_factor) then
+        exit
+     end if
+  end do
 
-  deallocate(prime_array)
+  print *, "max_factor = ", max_factor
 end subroutine problem_3
 
 
 
 program main
+  implicit none
+
   !call problem_1
   !call problem_2
   call problem_3
+  
 end program main
