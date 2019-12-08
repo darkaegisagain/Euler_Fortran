@@ -398,79 +398,33 @@ subroutine problem_10
   
 end subroutine problem_10
 
+
 subroutine problem_11
   implicit none
-  integer :: grid(1:20, 1:20)
-  integer :: row, col, i, j, k, ik, jk
-  integer(8) :: product(4), max
-  integer :: terms(1:4, 0:3)
+  integer :: grid(1:20, 1:20), io_grid(1:20,1:20)
+  integer(8) :: product(4), max_value
+  integer(8) :: vert(1:17,1:20), horz(1:20,1:17), diag1(1:17,1:17), diag2(1:17,1:17)
+  integer :: i, j
   
   open(unit=1, file="problem_11.txt")
-  read(1, *) ((grid(i, j), i=1,20), j=1,20)
+  read(1, *) ((io_grid(i, j), i=1,20), j=1,20)
   close(1)
 
+  grid = transpose(io_grid)
+  
   write(*,1) ((grid(i,j), i=1,20), j=1,20)
 1 format(I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3)
-  max = 0
 
-  do_row : do row=1,20
-     do_col : do col=1,20
-        
-        do_clear : do k=1,4
-           product(k) = 1
-        end do do_clear
+  vert = grid(1:17,1:20) * grid(2:18,1:20) * grid(3:19,1:20) * grid(4:20,1:20)
+  horz = grid(1:20,1:17) * grid(1:20,2:18) * grid(1:20,3:19) * grid(1:20,4:20)
+  diag1 = grid(1:17,1:17) * grid(2:18,2:18) * grid(3:19,3:19) * grid(4:20,4:20)
+  diag2 = grid(4:20,1:17) * grid(3:19,1:17) * grid(2:18,1:17) * grid(1:17,1:17)
 
-        do_products : do k=0,3
-           i = row
-           j = col
-           
-           ik = row + k
-           jk = col + k
+  max_value = 0
+  max_value = max(maxval(vert), maxval(horz), maxval(diag1), maxval(diag2))
 
-           ! mult to right
-           if (jk <= 20) then
-              product(1) = product(1) * grid(jk, i)
-              terms(1,k) = grid(jk, i)
-           else
-              product(1) = 0
-           endif
-
-           ! mult down
-           if (ik <= 20) then
-              product(2) = product(2) * grid(j, ik)
-              terms(2,k) = grid(j, ik)
-           else
-              product(2) = 0
-           end if
-
-           ! mult diagonally
-           if ((ik <= 20) .and. (jk <= 20)) then
-              product(3) = product(3) * grid(jk, ik)
-              terms(3,k) = grid(jk, ik)
-           else
-              product(3) = 0
-           end if
-
-           ! mult diagonally
-           ik = row - k
-           jk = col
-           if ((ik >= 1) .and. (jk <= 20)) then
-              product(4) = product(4) * grid(jk, ik)
-              terms(4,k) = grid(jk, ik)
-           else
-              product(4) = 0
-           end if
-        end do do_products
-
-        do_check_max : do k = 1,4
-           if (product(k) > max) then
-              max = product(k)
-           end if
-        end do do_check_max
-     end do do_col
-  end do do_row
-
-  print *, "max ", max
+  print *, max_value
+  
 end subroutine problem_11
 
 program main
