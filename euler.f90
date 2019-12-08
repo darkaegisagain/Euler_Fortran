@@ -401,26 +401,24 @@ end subroutine problem_10
 
 subroutine problem_11
   implicit none
-  integer :: grid(1:20, 1:20), io_grid(1:20,1:20)
-  integer(8) :: product(4), max_value
-  integer(8) :: vert(1:17,1:20), horz(1:20,1:17), diag1(1:17,1:17), diag2(1:17,1:17)
+  integer :: grid(1:20, 1:20)
+  integer :: product(4), max_value
+  integer :: vert(1:17,1:20), horz(1:20,1:17), diag1(1:17,1:17), diag2(1:17,1:17)
   integer :: i, j
   
   open(unit=1, file="problem_11.txt")
-  read(1, *) ((io_grid(i, j), i=1,20), j=1,20)
+  read(1, *) ((grid(i, j), i=1,20), j=1,20)
   close(1)
 
-  grid = transpose(io_grid)
-  
+  print *,"grid"
   write(*,1) ((grid(i,j), i=1,20), j=1,20)
 1 format(I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3,I3)
 
   vert = grid(1:17,1:20) * grid(2:18,1:20) * grid(3:19,1:20) * grid(4:20,1:20)
   horz = grid(1:20,1:17) * grid(1:20,2:18) * grid(1:20,3:19) * grid(1:20,4:20)
   diag1 = grid(1:17,1:17) * grid(2:18,2:18) * grid(3:19,3:19) * grid(4:20,4:20)
-  diag2 = grid(4:20,1:17) * grid(3:19,1:17) * grid(2:18,1:17) * grid(1:17,1:17)
+  diag2 = grid(4:20,1:17) * grid(3:19,2:18) * grid(2:18,3:19) * grid(1:17,4:20)
 
-  max_value = 0
   max_value = max(maxval(vert), maxval(horz), maxval(diag1), maxval(diag2))
 
   print *, max_value
