@@ -422,8 +422,73 @@ subroutine problem_11
   max_value = max(maxval(vert), maxval(horz), maxval(diag1), maxval(diag2))
 
   print *, max_value
-  
 end subroutine problem_11
+
+subroutine problem_12
+  integer(8) :: divisors(1:1000)
+  integer(8) :: i, j, k, num_div, N, temp, two, div_2, divisor
+
+  two = 2
+  i = 1
+ 
+  compute_triangle_numbers : do
+     N = i * (i + 1) / 2
+     temp = N
+     num_div = 2
+     divisors(1) = 1
+     divisors(2) = N
+     
+     div_2 = 2
+
+     print *, "Triangle number", N, "Index ", i
+     
+     ! get factors of 2
+     factors_of_two : do
+        
+        if (mod(temp, two) /= 0 .or. temp == 1) exit
+
+        num_div = num_div + 1
+        divisors(num_div) = temp
+        
+        num_div = num_div + 1
+        divisors(num_div) = div_2
+
+        div_2 = div_2 * 2
+        temp = temp / 2
+     end do factors_of_two
+        
+     ! get factors of odd numbers        
+     divisor = 3
+     odd_factors : do
+        if (divisor > temp) exit
+
+        if (mod(temp, divisor) == 0) then
+           num_div = num_div + 1
+           divisors(num_div) = divisor
+        end if
+           
+        do
+           if (mod(temp, divisor) /= 0 .or. temp == 1) exit
+           
+           num_div = num_div + 1
+           divisors(num_div) = temp / divisor
+           
+           temp = temp / divisor
+        end do
+
+        divisor = divisor + 2
+     end do odd_factors
+
+     if (num_div > 0) then
+        write(*, 10) (divisors(k), k=1,num_div)
+10      format(2I16)
+     end if
+    
+     i = i + 1
+     
+  end do compute_triangle_numbers
+
+end subroutine problem_12
 
 program main
   implicit none
@@ -438,7 +503,8 @@ program main
   !call problem_8
   !call problem_9
   !call problem_10
+  !call problem_11
 
-  call problem_11
+  call problem_12
   
 end program main
