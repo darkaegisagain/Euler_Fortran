@@ -1,4 +1,5 @@
 
+
 ! PROBLEM 1
 subroutine problem_1
   integer :: i, count, sum
@@ -425,66 +426,70 @@ subroutine problem_11
 end subroutine problem_11
 
 subroutine problem_12
+  implicit none
   integer(8) :: divisors(1:1000)
-  integer(8) :: i, j, k, num_div, N, temp, two, div_2, divisor
+  integer(8) :: i, j, k, num_div, div_var, N, temp, two, divisor
 
   two = 2
-  i = 1
+  i = 2
  
   compute_triangle_numbers : do
      N = i * (i + 1) / 2
      temp = N
-     num_div = 2
      divisors(1) = 1
-     divisors(2) = N
+     num_div = 1
      
-     div_2 = 2
+     div_var = 2
 
      print *, "Triangle number", N, "Index ", i
      
      ! get factors of 2
-     factors_of_two : do
-        
+     factors_of_two : do    
         if (mod(temp, two) /= 0 .or. temp == 1) exit
 
         num_div = num_div + 1
         divisors(num_div) = temp
-        
-        num_div = num_div + 1
-        divisors(num_div) = div_2
 
-        div_2 = div_2 * 2
         temp = temp / 2
+        div_var = div_var * 2
      end do factors_of_two
-        
+
      ! get factors of odd numbers        
      divisor = 3
+     div_var = divisor
      odd_factors : do
         if (divisor > temp) exit
 
-        if (mod(temp, divisor) == 0) then
-           num_div = num_div + 1
-           divisors(num_div) = divisor
-        end if
-           
         do
            if (mod(temp, divisor) /= 0 .or. temp == 1) exit
-           
+        
            num_div = num_div + 1
-           divisors(num_div) = temp / divisor
-           
+           divisors(num_div) = divisor
+
            temp = temp / divisor
         end do
 
         divisor = divisor + 2
+        div_var = divisor
      end do odd_factors
 
-     if (num_div > 0) then
-        write(*, 10) (divisors(k), k=1,num_div)
-10      format(2I16)
-     end if
+     bubble_sort : do j=1,num_div
+        do k=j,num_div
+           if (divisors(k) < divisors(j)) then
+              temp = divisors(j)
+              divisors(j) = divisors(k)
+              divisors(k) = temp
+           end if
+        end do
+     end do bubble_sort
+     
+     print_results : do k=1,num_div
+        print *, divisors(k)
+     end do print_results
     
      i = i + 1
+
+     if (i == 10) stop
      
   end do compute_triangle_numbers
 
