@@ -1,6 +1,8 @@
 
 
+! ****************************************************
 ! PROBLEM 1
+! ****************************************************
 subroutine problem_1
   integer :: i, count, sum
 
@@ -15,7 +17,9 @@ subroutine problem_1
   end do
 end subroutine problem_1
 
+! ****************************************************
 ! PROBLEM 2
+! ****************************************************
 integer function fibonacci(x)
   implicit none
   integer :: x
@@ -71,6 +75,9 @@ subroutine problem_2
   print *, "Even Sum is ", even_sum
 end subroutine problem_2
 
+! ****************************************************
+! PROBLEM 3
+! ****************************************************
 subroutine problem_3
   implicit none
 
@@ -98,6 +105,9 @@ subroutine problem_3
 end subroutine problem_3
 
 
+! ****************************************************
+! PROBLEM 4
+! ****************************************************
 subroutine problem_4
   implicit none
   integer :: palindromic_numbers(1:1000)
@@ -163,6 +173,9 @@ subroutine problem_4
 end subroutine problem_4
 
   
+! ****************************************************
+! PROBLEM 5
+! ****************************************************
 subroutine problem_5
   integer :: max
   integer :: i
@@ -188,6 +201,9 @@ subroutine problem_5
   end do
 end subroutine problem_5
   
+! ****************************************************
+! PROBLEM 6
+! ****************************************************
 subroutine problem_6
   integer :: sum_of_squares
   integer :: sum, square_of_sum
@@ -211,6 +227,9 @@ subroutine problem_6
   print *, "diff = ", diff  
 end subroutine problem_6
 
+! ****************************************************
+! PROBLEM 7
+! ****************************************************
 subroutine problem_7
   implicit none
   integer(8) :: at, primes(1:10001)
@@ -243,6 +262,10 @@ subroutine problem_7
   end do fill_primes
 end subroutine problem_7
 
+
+! ****************************************************
+! PROBLEM 8
+! ****************************************************
 subroutine problem_8
   implicit none
   character(len = 1000) :: bignum
@@ -304,6 +327,9 @@ subroutine problem_8
   print *, "max value ", max
 end subroutine problem_8
 
+! ****************************************************
+! PROBLEM 9
+! ****************************************************
 subroutine problem_9
   integer :: a, b, c, triplet
   integer :: as, bs, cs, as_p_bs, product
@@ -343,6 +369,9 @@ subroutine problem_9
   end do
 end subroutine problem_9
 
+! ****************************************************
+! PROBLEM 10
+! ****************************************************
 #define P_NUM_PRIMES 1000000
 subroutine problem_10
   implicit none
@@ -400,6 +429,9 @@ subroutine problem_10
 end subroutine problem_10
 
 
+! ****************************************************
+! PROBLEM 11
+! ****************************************************
 subroutine problem_11
   implicit none
   integer :: grid(1:20, 1:20)
@@ -425,73 +457,97 @@ subroutine problem_11
   print *, max_value
 end subroutine problem_11
 
-subroutine problem_12
+
+
+! ****************************************************
+! PROBLEM 12
+! ****************************************************
+integer function num_divisors(N)
   implicit none
-  integer(8) :: divisors(1:1000)
-  integer(8) :: i, j, k, num_div, div_var, N, temp, two, divisor
+  integer(8) :: N
+  integer(8) :: count, num_div, temp, two, P
 
   two = 2
-  i = 2
- 
-  compute_triangle_numbers : do
-     N = i * (i + 1) / 2
-     temp = N
-     divisors(1) = 1
-     num_div = 1
-     
-     div_var = 2
+  if (mod(N, two) == 0) then
+     N = N / 2
+  end if
 
-     print *, "Triangle number", N, "Index ", i
-     
-     ! get factors of 2
-     factors_of_two : do    
-        if (mod(temp, two) /= 0 .or. temp == 1) exit
+  num_div = 1
+  
+  count = 0
+  count_evens : do
+     if (mod(N, two) /= 0) exit
 
-        num_div = num_div + 1
-        divisors(num_div) = temp
+     count = count + 1
 
-        temp = temp / 2
-        div_var = div_var * 2
-     end do factors_of_two
+     N = N / 2
+  end do count_evens
+  num_div = num_div * (count + 1)
 
-     ! get factors of odd numbers        
-     divisor = 3
-     div_var = divisor
-     odd_factors : do
-        if (divisor > temp) exit
 
-        do
-           if (mod(temp, divisor) /= 0 .or. temp == 1) exit
-        
-           num_div = num_div + 1
-           divisors(num_div) = divisor
+  P = 3
+  count_odds : do
+     if (N == 1) exit
 
-           temp = temp / divisor
-        end do
+     count = 0
+     do
+        if (mod(N, P) /= 0) exit
 
-        divisor = divisor + 2
-        div_var = divisor
-     end do odd_factors
+        count = count + 1
 
-     bubble_sort : do j=1,num_div
-        do k=j,num_div
-           if (divisors(k) < divisors(j)) then
-              temp = divisors(j)
-              divisors(j) = divisors(k)
-              divisors(k) = temp
-           end if
-        end do
-     end do bubble_sort
-     
-     print_results : do k=1,num_div
-        print *, divisors(k)
-     end do print_results
-    
+        N = N / P
+     end do
+     num_div = num_div * (count + 1)
+
+     P = P + 2
+  end do count_odds
+
+  
+  num_divisors = num_div  
+end function num_divisors
+
+
+integer(8) function triangle_number(i)
+  implicit none
+  integer :: i
+
+  triangle_number = i * (i + 1) / 2
+end function triangle_number
+
+subroutine problem_12
+  implicit none
+
+  !function defs
+  integer(8) :: triangle_number
+  integer :: num_divisors
+
+  !variables
+  integer(8) :: i, n, np1
+  
+  i = 1
+  n = num_divisors(i)
+  np1 = num_divisors(i + 1)
+
+  do
+     if ((n * np1) > 500) then
+        print *, "Triangle number", triangle_number(i), "index", i, "terms", n * np1
+        exit
+     end if
+
+     print *,"n", n, "np1", np1, "index", i
      i = i + 1
+     n = np1
+     np1 = num_divisors(i+1)
+  end do
+  
+end subroutine problem_12
 
-     if (i == 10) stop
-     
-  end do compute_triangle_numbers
+! ****************************************************
+! PROBLEM 13
+! ****************************************************
+subroutine problem_12
+  implicit none
+
 
 end subroutine problem_12
 
@@ -509,7 +565,8 @@ program main
   !call problem_9
   !call problem_10
   !call problem_11
+  !call problem_12
 
-  call problem_12
+  call problem_13
   
 end program main
