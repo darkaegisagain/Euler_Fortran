@@ -545,11 +545,37 @@ end subroutine problem_12
 ! ****************************************************
 ! PROBLEM 13
 ! ****************************************************
-subroutine problem_12
+subroutine problem_13
   implicit none
+  integer :: i, j, pten
+  character(50) :: inputline(1:100), tempstr
+  integer :: ibuffer(1:100)
+  integer :: t(1:5)
+  integer :: stat
+  integer(8) :: sum
+  integer :: c
+  
+  open(unit=1, file="problem_13.txt")
+  do i=1,100
+     read(1, '(A)', iostat=stat) inputline(i)
 
+     print *, inputline(i)
+  end do
+  close(1)
 
-end subroutine problem_12
+  sum = 0
+  pten = 1
+  do i=1,10
+     do j=1,100
+        tempstr = inputline(j)
+        c = ichar(tempstr(i:i)) - 48
+        sum = sum + c * pten
+     end do
+     pten = pten * 10
+  end do
+
+  print *,"sum", sum
+end subroutine problem_13
 
 program main
   implicit none
@@ -568,5 +594,5 @@ program main
   !call problem_12
 
   call problem_13
-  
+ 
 end program main
