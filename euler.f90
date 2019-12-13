@@ -1,5 +1,3 @@
-
-
 ! ****************************************************
 ! PROBLEM 1
 ! ****************************************************
@@ -577,6 +575,53 @@ subroutine problem_13
   print *,"sum", sum
 end subroutine problem_13
 
+! ****************************************************
+! PROBLEM 14
+! ****************************************************
+subroutine problem_14
+  implicit none
+  integer(8) :: N, two
+  integer :: i, oneM, n_terms, max_terms, max
+
+  max = 0
+  max_terms = 0
+  oneM = 1e6
+  two = 2
+  
+  do i=1,oneM
+     N = i
+     
+     if (mod(N,two) == 0) then
+        N = N / 2
+     else
+        N = 3 * N + 1
+     end if
+
+     print *, "i", i, "N", N
+     
+     n_terms = 1
+     
+     do
+        if (mod(N,two) == 0) then
+           N = N / 2
+        else
+           N = 3 * N + 1
+        end if
+
+        n_terms = n_terms + 1
+        
+        if (n_terms > max_terms) then
+           max_terms = n_terms
+           max = i
+        end if
+        
+        if (N == 1) exit
+     end do
+  end do
+
+  print *, "Max terms", max_terms, "i", max
+end subroutine problem_14
+
 program main
   implicit none
 
@@ -592,7 +637,8 @@ program main
   !call problem_10
   !call problem_11
   !call problem_12
+  !call problem_13
 
-  call problem_13
- 
+  call problem_14
+  
 end program main
