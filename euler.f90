@@ -622,114 +622,117 @@ subroutine problem_14
   print *, "Max terms", max_terms, "i", max
 end subroutine problem_14
 
+#define MAX_P_15 128000000
 subroutine problem_15
   implicit none
-  integer :: right(1:10000000,1:2), right_num
-  integer :: down(1:10000000,1:2), down_num
+  integer :: right(1:MAX_P_15,1:2), right_num
+  integer :: down(1:MAX_P_15,1:2), down_num
   integer :: mask(1:20,1:20)
-  integer :: i, j, done, start(1:2)
-  integer :: max_size
+  integer :: i, j, tr, td, done, start(1:2)
+  integer :: max_size, gs, gsm1
 
-  max_size = 10000000
-  
-  right(1,1) = 0
-  right(1,2) = 0
-  right_num = 1
-  
-  down(1,1) = 0
-  down(1,2) = 0
-  down_num = 1
-  
-  test_all_paths : do
+  max_size = MAX_P_15
 
-     ! right array moves right, spawns down
-     i = 1
-     loop_right : do
-        ! move to right
-        if (right(i,1) < 19) then
-           right(i,1) = right(i,1) + 1
-        else if (right(i,1) == 19 .and. right(i,2) < 19) then
+  
+  !gs = 6
+  do gs = 2,20
+     print *, "gs", gs
+     gsm1 = gs - 1
+
+     right(1,1) = 1
+     right(1,2) = 1
+     right_num = 1
+
+     down(1,1) = 1
+     down(1,2) = 1
+     down_num = 1
+
+     test_all_paths : do
+
+        ! right array moves right, spawns down
+        i = 1
+        tr = right_num
+        td = down_num
+        loop_right : do
+           ! move to right
+           if (right(i,1) < gs) then
+              right(i,1) = right(i,1) + 1
+           else if (right(i,1) == gs .and. right(i,2) < gs) then
+              ! move down
+              right(i,2) = right(i,2) + 1
+           end if
+
+           ! if we can spawn a down vector do so
+           if (right(i,1) < gs .and. right(i,2) < gs) then
+              down_num = down_num + 1
+              down(down_num,1) = right(i,1)
+              down(down_num,2) = right(i,2)
+           end if
+
+           if (down_num >= max_size) stop
+
+           i = i + 1        
+           if (i > tr) then
+              exit
+           end if
+        end do loop_right
+
+        ! down array moves down, spawns right
+        i = 1
+        loop_down : do
            ! move down
-           right(i,2) = right(i,2) + 1
-        end if
+           if (down(i,2) < gs) then
+              down(i,2) = down(i,2) + 1
+           else if (down(i,2) == gs .and. down(i,1) < gs) then
+              ! move right
+              down(i,1) = down(i,1) + 1
+           end if
 
-        ! if we can spawn a down vector do so
-        if (right(i,1) < 19 .and. right(i,2) < 18) then
-           down_num = down_num + 1
-           down(down_num,1) = right(i,1)
-           down(down_num,2) = right(i,2) + 1
-           !print *, "spawn down", down_num
-           !print *, down(down_num,1), down(down_num, 2)
-        end if
+           ! spawn right
+           if (down(i,1) < gs .and. down(i,2) < gs) then
+              right_num = right_num + 1
+              right(right_num,1) = down(i,1)
+              right(right_num,2) = down(i,2)
+           end if
 
-        if (down_num > max_size) stop
-        
-        i = i + 1
-        
-        if (i > right_num) then
-           exit
-        end if
+           if (right_num > max_size) stop
 
-        if (i > max_size) stop
-     end do loop_right
+           i = i + 1
+           if (i > td) then
+              exit
+           end if
 
-     ! down array moves down, spawns right
-     i = 1
-     loop_down : do
-        ! move down
-        if (down(i,2) < 19) then
-           down(i,2) = down(i,2) + 1
-        else if (down(i,2) == 19 .and. down(i,1) < 19) then
-           ! move right
-           down(i,1) = down(i,1) + 1
-        end if
-        
-        ! spawn right
-        if (down(i,1) < 18 .and. down(i,2) < 19) then
-           right_num = right_num + 1
-           right(right_num,1) = down(i,1) + 1
-           right(right_num,2) = down(i,2)
-           !print *, "spawn right", right_num
-           !print *, right(right_num,1), right(right_num, 2)
-        end if
+           if (i > max_size) stop
+        end do loop_down
 
-        if (right_num > max_size) stop
-        
-        i = i + 1
+        print *, "right_num", right_num, "down_num", down_num
 
-        if (i > down_num) then
-           exit
-        end if
+        done = 1
 
-        if (i > max_size) stop
-     end do loop_down
-
-     print *, "right_num", right_num, "down_num", down_num
-     
-     done = 1
-
-     test_right : do i=1,right_num
-        if (right(i,1) /= 19 .and. right(i,2) /= 19) then
-           done = 0
-           exit
-        end if
-     end do test_right
-
-     test_down : if (done == 1) then
-        do i=1,down_num
-           if (down(i,1) /= 19 .and. down(i,2) /= 19) then
+        test_right : do i=1,right_num
+           if (right(i,1) /= gs .and. right(i,2) /= gs) then
               done = 0
               exit
            end if
-        end do
-     end if test_down
+        end do test_right
 
-     test_done : if (done == 1) then
-        exit
-     end if test_done
-  end do test_all_paths
+        test_down : if (done == 1) then
+           do i=1,down_num
+              if (down(i,1) /= gs .and. down(i,2) /= gs) then
+                 done = 0
+                 exit
+              end if
+           end do
+        end if test_down
 
-  print *, "right", right_num, "down", down_num, "total", right_num + down_num
+        test_done : if (done == 1) then
+           exit
+        end if test_done
+     end do test_all_paths
+
+     print *, "right", right_num, "down", down_num, "total", right_num + down_num
+  end do
+  
  end subroutine problem_15
    
   
