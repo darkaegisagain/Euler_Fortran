@@ -622,6 +622,9 @@ subroutine problem_14
   print *, "Max terms", max_terms, "i", max
 end subroutine problem_14
 
+! ****************************************************
+! PROBLEM 15
+! ****************************************************
 subroutine problem_15
   implicit none
 
@@ -655,6 +658,51 @@ subroutine problem_15
 end subroutine problem_15
    
   
+! ****************************************************
+! PROBLEM 16
+! ****************************************************
+subroutine problem_16
+  implicit none
+  integer :: sum(1:500)
+  integer :: i,j,temp, carry
+
+  !clear array
+  do i=1,500
+     sum(i) = 0
+  end do
+
+  
+  !calc 2 ^ 1000
+  sum(1) = 1
+  
+  do i=1,1000
+
+     ! add a number to itself = times 2
+     ! do this 1000 times
+     temp = 0
+     carry = 0
+     do j=1,500
+        temp = sum(j) + sum(j) + carry
+        if (temp > 9) then
+           sum(j) = mod(temp,10)
+        else
+           sum(j) = temp
+        end if
+        carry = temp / 10
+     end do
+
+  end do
+
+  temp = 0
+  do i=1,500
+     !print *,"sum",sum(i)
+     temp = temp + sum(i)
+  end do
+
+  print *, "sum", temp
+  
+end subroutine problem_16
+
 program main
   implicit none
 
@@ -672,7 +720,8 @@ program main
   !call problem_12
   !call problem_13
   !call problem_14
+  !call problem_15
 
-  call problem_15
+  call problem_16
   
 end program main
