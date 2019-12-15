@@ -622,118 +622,37 @@ subroutine problem_14
   print *, "Max terms", max_terms, "i", max
 end subroutine problem_14
 
-#define MAX_P_15 128000000
 subroutine problem_15
   implicit none
-  integer :: right(1:MAX_P_15,1:2), right_num
-  integer :: down(1:MAX_P_15,1:2), down_num
-  integer :: mask(1:20,1:20)
-  integer :: i, j, tr, td, done, start(1:2)
-  integer :: max_size, gs, gsm1
 
-  max_size = MAX_P_15
+  integer(8) :: grid(1:20,1:20), sum
+  integer(4) :: i, j, gs
 
-  
-  !gs = 6
-  do gs = 2,20
-     print *, "gs", gs
-     gsm1 = gs - 1
+  do gs = 2,21
+     ! clear grid
+     do i=1,gs
+        do j=1,gs
+           grid(i,j) = 0
+        end do
+     end do
 
-     right(1,1) = 1
-     right(1,2) = 1
-     right_num = 1
+     ! fill in top left egdges with 1s for 1 possible way to get there
+     do i=1,gs
+        grid(i,1) = 1
+        grid(1,i) = 1
+     end do
 
-     down(1,1) = 1
-     down(1,2) = 1
-     down_num = 1
+     ! calc number of paths
+     do i=2,gs
+        do j=2,gs
+           grid(i, j) = grid(i,j-1) + grid(i-1,j)
+        end do
+     end do
 
-     test_all_paths : do
-
-        ! right array moves right, spawns down
-        i = 1
-        tr = right_num
-        td = down_num
-        loop_right : do
-           ! move to right
-           if (right(i,1) < gs) then
-              right(i,1) = right(i,1) + 1
-           else if (right(i,1) == gs .and. right(i,2) < gs) then
-              ! move down
-              right(i,2) = right(i,2) + 1
-           end if
-
-           ! if we can spawn a down vector do so
-           if (right(i,1) < gs .and. right(i,2) < gs) then
-              down_num = down_num + 1
-              down(down_num,1) = right(i,1)
-              down(down_num,2) = right(i,2)
-           end if
-
-           if (down_num >= max_size) stop
-
-           i = i + 1        
-           if (i > tr) then
-              exit
-           end if
-        end do loop_right
-
-        ! down array moves down, spawns right
-        i = 1
-        loop_down : do
-           ! move down
-           if (down(i,2) < gs) then
-              down(i,2) = down(i,2) + 1
-           else if (down(i,2) == gs .and. down(i,1) < gs) then
-              ! move right
-              down(i,1) = down(i,1) + 1
-           end if
-
-           ! spawn right
-           if (down(i,1) < gs .and. down(i,2) < gs) then
-              right_num = right_num + 1
-              right(right_num,1) = down(i,1)
-              right(right_num,2) = down(i,2)
-           end if
-
-           if (right_num > max_size) stop
-
-           i = i + 1
-           if (i > td) then
-              exit
-           end if
-
-           if (i > max_size) stop
-        end do loop_down
-
-        print *, "right_num", right_num, "down_num", down_num
-
-        done = 1
-
-        test_right : do i=1,right_num
-           if (right(i,1) /= gs .and. right(i,2) /= gs) then
-              done = 0
-              exit
-           end if
-        end do test_right
-
-        test_down : if (done == 1) then
-           do i=1,down_num
-              if (down(i,1) /= gs .and. down(i,2) /= gs) then
-                 done = 0
-                 exit
-              end if
-           end do
-        end if test_down
-
-        test_done : if (done == 1) then
-           exit
-        end if test_done
-     end do test_all_paths
-
-     print *, "right", right_num, "down", down_num, "total", right_num + down_num
+     print *,"max paths", grid(gs,gs), "grid size",gs-1
   end do
   
- end subroutine problem_15
+end subroutine problem_15
    
   
 program main
