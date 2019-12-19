@@ -703,6 +703,171 @@ subroutine problem_16
   
 end subroutine problem_16
 
+! ****************************************************
+! PROBLEM 17
+! ****************************************************
+subroutine problem_17
+  implicit none
+  integer :: fullNumToStrLen
+  integer :: num, sum, i, j
+  character(len=30) :: thousands(1:10)
+  character(len=30) :: hundreds(1:10)
+  character(len=30) :: tens(1:10)
+  character(len=30) :: teens(1:10)
+  character(len=30) :: ones(1:10)
+  character(len=200) :: fullnumber
+  character :: c
+  integer :: t(1:4), p10, temp
+  
+  thousands(1) = 'one thousand'
+  
+  hundreds(1) = 'one hundred'
+  hundreds(2) = 'two hundred'
+  hundreds(3) = 'three hundred'
+  hundreds(4) = 'four hundred'
+  hundreds(5) = 'five hundred'
+  hundreds(6) = 'six hundred'
+  hundreds(7) = 'seven hundred'
+  hundreds(8) = 'eight hundred'
+  hundreds(9) = 'nine hundred'
+  
+  tens(1) = 'ten'
+  tens(2) = 'twenty'
+  tens(3) = 'thirty'
+  tens(4) = 'forty'
+  tens(5) = 'fifty'
+  tens(6) = 'sixty'
+  tens(7) = 'seventy'
+  tens(8) = 'eighty'
+  tens(9) = 'ninety'
+
+  teens(1) = 'eleven'
+  teens(2) = 'twelve'
+  teens(3) = 'thirteen'
+  teens(4) = 'fourteen'
+  teens(5) = 'fifteen'
+  teens(6) = 'sixteen'
+  teens(7) = 'seventeen'
+  teens(8) = 'eighteen'
+  teens(9) = 'nineteen'
+
+  ones(1) = 'one'
+  ones(2) = 'two'
+  ones(3) = 'three'
+  ones(4) = 'four'
+  ones(5) = 'five'
+  ones(6) = 'six'
+  ones(7) = 'seven'
+  ones(8) = 'eight'
+  ones(9) = 'nine'
+
+  sum = 0
+  do num=1,1000
+
+     p10 = 1000
+     temp = num
+     do i=0,3
+        t(4-i) = temp / p10
+        temp = temp - (temp / p10) * p10
+        p10 = p10 / 10
+     end do
+
+     !print *,t(4),t(3),t(2),t(1), i
+     fullnumber = trim('')
+
+     ! thousand
+     if (t(4) > 0) then
+        fullnumber = trim(fullnumber)//thousands(1)
+     end if
+ 
+     !print *, fullnumber
+
+     ! hundreds
+     if (t(3) > 0) then
+        if (t(4) > 0) then
+           fullnumber = trim(fullnumber)//' '//hundreds(t(3))
+        else
+           fullnumber = hundreds(t(3))
+        end if
+     end if
+
+     print *, fullnumber
+
+     ! insert 'and'
+     if (t(4) > 0 .or. t(3) > 0) then
+        if (t(2) > 0 .or. t(1) > 0) then
+           ! one thousand five hundred and
+           fullnumber = trim(fullnumber)//' and '
+        end if
+     end if
+
+     ! teens
+     if (t(2) == 1 .and. t(1) > 0) then
+        fullnumber = trim(fullnumber)//' '//teens(t(1))
+     else
+        if (t(2) > 0) then
+           fullnumber = trim(fullnumber)//' '//tens(t(2))
+        end if
+        
+        if (t(1) > 0) then
+           fullnumber = trim(fullnumber)//' '//ones(t(1))
+        end if
+     end if
+
+     print *, fullnumber
+
+     fullnumber = trim(fullnumber)
+
+     temp = 0
+     do j=1,len(fullnumber)
+        c = fullnumber(j:j)
+        
+        if (c >= 'a' .and. c <= 'z') then
+           temp = temp + 1
+        end if
+     end do
+
+     if (num == 342 .or. num == 115) then
+        print *, fullnumber, temp
+     end if
+     
+     sum = sum + temp
+  end do
+
+  print *, sum
+  
+end subroutine problem_17
+
+! ****************************************************
+! PROBLEM 18
+! ****************************************************
+subroutine problem_18
+  implicit none
+  integer :: triangle(1:15,1:15)
+  integer :: triangle_path(1:15,1:15)
+  integer :: i, j, sums(1:14,1:14)
+  integer :: stat
+  
+  open(unit=1, file="problem_18.txt")
+
+  do i=1,15
+     read(1, *,iostat=stat) triangle(i,1:i)
+  end do
+    
+  close(1)
+
+  do i=14,1,-1
+     do j=1, i
+        ! go from bottom up summing
+
+        triangle(i,j) = triangle(i,j) + max(triangle(i+1,j), triangle(i+1,j+1))
+     end do
+  end do
+
+  print *, triangle(1,1)
+  
+end subroutine problem_18
+
 program main
   implicit none
 
@@ -721,7 +886,9 @@ program main
   !call problem_13  it looks like my changes didn't make it in...
   !call problem_14
   !call problem_15
+  !call problem_16
+  !call problem_17
 
-  call problem_16
+  call problem_18
   
 end program main
