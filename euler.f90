@@ -844,9 +844,7 @@ end subroutine problem_17
 subroutine problem_18
   implicit none
   integer :: triangle(1:15,1:15)
-  integer :: triangle_path(1:15,1:15)
-  integer :: i, j, sums(1:14,1:14)
-  integer :: stat
+  integer :: i, j, stat
   
   open(unit=1, file="problem_18.txt")
 
@@ -868,6 +866,104 @@ subroutine problem_18
   
 end subroutine problem_18
 
+! ****************************************************
+! PROBLEM 19
+! ****************************************************
+subroutine problem_19
+  implicit none
+  integer :: weekday, day, month, year
+  integer :: days_in_month(1:12) = (/31,28,31,30,31,30,31,31,30,31,30,31/)
+  integer :: num
+  logical :: leap_year
+  
+  !1 Jan 1900 was a Monday.
+
+  !Thirty days has September,
+  !April, June and November.
+  !All the rest have thirty-one,
+  !Saving February alone,
+  !Which has twenty-eight, rain or shine.
+  !And on leap years, twenty-nine.
+  !A leap year occurs on any year evenly divisible by 4, but not on a century unless it is divisible by 400.
+  !How many Sundays fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000)?
+
+  ! 1 jan 1900 was a monday
+  weekday = 2
+  day = 1
+  month = 1
+  year = 1900
+
+  leap_year = .false.
+  if (mod(year,100) == 0) then
+     if (mod(year,400) == 0) then
+        leap_year = .true.
+     end if
+  else if (mod(year,4) == 0) then
+     leap_year = .true.
+  end if
+  
+  num = 0
+  
+  do
+     ! increment days / weekdays
+     day = day + 1
+     weekday = weekday + 1
+
+     ! roll over weekdays
+     if (weekday > 7) weekday = 1
+     
+     ! increment month
+     if (day > days_in_month(month)) then
+        day = 1
+        
+        month = month + 1
+        ! increment year
+        if (month > 12) then
+           month = 1
+           year = year + 1
+
+           set_leap_year : if (month == 1 .and. day == 1) then
+              leap_year = .false.
+
+              if (mod(year,100) == 0) then
+                 if (mod(year,400) == 0) then
+                    leap_year = .true.
+                 end if
+              else if (mod(year,4) == 0) then
+                 leap_year = .true.
+              end if
+
+              if (leap_year) print *,"leap year", year
+
+              if (leap_year) then
+                 days_in_month(2) = 29
+              else
+                 days_in_month(2) = 28
+              end if
+           end if set_leap_year
+        end if
+
+        print *, day, month, year, "first day of month"
+
+     end if
+
+     if (day == 1 .and. month == 1 .and. year == 1901) then
+        num = 0
+     end if
+     
+     add_1st_sundays : if (day == 1 .and. weekday == 1) then
+        num = num + 1
+     end if add_1st_sundays
+
+     if (day == 1 .and. month == 1 .and. year == 2001) then
+        exit
+     end if
+  end do
+
+  print *, "Num sundays falling on 1st of month", num
+     
+end subroutine problem_19
+
 program main
   implicit none
 
@@ -888,7 +984,8 @@ program main
   !call problem_15
   !call problem_16
   !call problem_17
+  !call problem_18
 
-  call problem_18
+  call problem_19
   
 end program main
