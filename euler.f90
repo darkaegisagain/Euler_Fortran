@@ -1017,17 +1017,21 @@ subroutine problem_21
   print *, sum
 end subroutine problem_21
 
-subroutine problem_22
+subroutine problem_23
   implicit none
-  integer :: i, j, sum, res
+  integer :: abundant(1:30000)
+  integer :: i, j, an, sum
 
-  res = 0
+  do i=1,30000
+     abundant(i) = 0
+  end do
+  
+  an = 1
   do i=1,28123
-
-     sum = 1
+     sum = 0
      
      j = 1
-     do
+     do 
         if (j == i) exit
 
         if (mod(i, j) == 0) then
@@ -1037,8 +1041,8 @@ subroutine problem_22
         j = j + 1
      end do
      
-     if (sum /= i) then
-        res = res + sum
+     if (sum > i) then
+        abundant(an) = sum
      else
         print *, i
      end if
@@ -1048,12 +1052,12 @@ subroutine problem_22
   
   !28123
 
-end subroutine problem_22
+end subroutine problem_23
 
-subroutine problem_23
+subroutine problem_24
   implicit none
 
-end subroutine problem_23
+end subroutine problem_24
 
 program main
   implicit none
@@ -1082,7 +1086,9 @@ program main
 
   !call problem_20
   !call problem_21
-  call problem_22
+  !call problem_22
+  
+  call problem_23
 
   !call problem_23
   
