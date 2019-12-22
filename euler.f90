@@ -1019,14 +1019,13 @@ end subroutine problem_21
 
 subroutine problem_23
   implicit none
-  integer :: abundant(1:30000)
-  integer :: i, j, an, sum
+  integer :: abundant(1:28123)
+  integer :: i, j, an_count
+  integer(8) :: sum, an_sums, res
 
-  do i=1,30000
-     abundant(i) = 0
-  end do
+  abundant = 0
   
-  an = 1
+  an_count = 0
   do i=1,28123
      sum = 0
      
@@ -1042,21 +1041,39 @@ subroutine problem_23
      end do
      
      if (sum > i) then
-        abundant(an) = sum
-     else
-        print *, i
+        an_count = an_count + 1
+        abundant(an_count) = sum
+        !print *,an_count, i, sum
      end if
   end do
 
-  print *,res
-  
-  !28123
+  print *,"an_count",an_count
+ 
+  an_sums = 0
+  do i=1,an_count
+     do j=1,an_count
+        an_sums = an_sums + abundant(i) + abundant(j)
+     end do
+  end do
+  print *,"an_sums", an_sums
 
+  res = 0
+  do i=1,28123
+     do j=1,28123
+        res = res + i + j
+     end do
+  end do
+  print *,"sum of all two numbers to 28123",res
+  
+  res = res - an_sums
+  
+  print *,res  
 end subroutine problem_23
 
 subroutine problem_24
   implicit none
 
+  
 end subroutine problem_24
 
 program main
@@ -1090,6 +1107,6 @@ program main
   
   call problem_23
 
-  !call problem_23
+  !call problem_24
   
 end program main
