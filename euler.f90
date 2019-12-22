@@ -964,6 +964,97 @@ subroutine problem_19
      
 end subroutine problem_19
 
+subroutine problem_20
+  implicit none
+
+  
+end subroutine problem_20
+
+subroutine problem_21
+  implicit none
+  integer :: sums(1:10000), amicable(1:100000)
+  integer :: i, j, sum, temp
+
+  ! calc divisor sums
+  do i=1,9999
+     print *,"I",i
+     sum = 0
+
+     j = 1
+     do j = 1,i-1
+
+        if (mod(i, j) == 0) then
+           print *,"divisor",j
+           sum = sum + j
+        end if
+     end do
+     
+     sums(i) = sum
+  end do
+
+  do i=1,9999
+     amicable(i) = 0
+  end do
+  
+  ! find pairs
+  do i=1,9999
+     temp = sums(i)
+
+     if (temp < 10000 .and. temp /= i) then
+        if (sums(temp) == i) then
+           print *,"pair",sums(i),sums(temp),i,temp
+           amicable(i) = temp
+           amicable(temp) = i
+        end if
+     end if
+  end do
+ 
+  sum = 0
+  do i=1,9999
+     sum = sum + amicable(i)
+  end do
+  
+  print *, sum
+end subroutine problem_21
+
+subroutine problem_22
+  implicit none
+  integer :: i, j, sum, res
+
+  res = 0
+  do i=1,28123
+
+     sum = 1
+     
+     j = 1
+     do
+        if (j == i) exit
+
+        if (mod(i, j) == 0) then
+           sum = sum + j
+        end if
+
+        j = j + 1
+     end do
+     
+     if (sum /= i) then
+        res = res + sum
+     else
+        print *, i
+     end if
+  end do
+
+  print *,res
+  
+  !28123
+
+end subroutine problem_22
+
+subroutine problem_23
+  implicit none
+
+end subroutine problem_23
+
 program main
   implicit none
 
@@ -985,7 +1076,14 @@ program main
   !call problem_16
   !call problem_17
   !call problem_18
+  !call problem_19
 
-  call problem_19
+  ! problem 20 solved in mathematica
+
+  !call problem_20
+  !call problem_21
+  call problem_22
+
+  !call problem_23
   
 end program main
